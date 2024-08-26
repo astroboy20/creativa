@@ -1,4 +1,5 @@
-"use client"
+"use client";
+import Link from "next/link";
 import React, { useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdCancel } from "react-icons/md";
@@ -38,10 +39,15 @@ const Header = () => {
 
       {/* Authentication buttons for medium to large screens */}
       <div className="hidden md:flex gap-10 items-center text-[20px]">
-        <p>Sign in</p>
-        <p className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]">
-          Sign up
-        </p>
+        <Link href={"/login"}>
+          {" "}
+          <p>Sign in</p>
+        </Link>
+        <Link href={"/register"}>
+          <p className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]">
+            Sign up
+          </p>
+        </Link>
       </div>
 
       {/* Mobile menu */}
