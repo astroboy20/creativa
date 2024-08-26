@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Stardos_Stencil } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
+const stardos_stencil = Stardos_Stencil({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-stardos_stencil",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={stardos_stencil.className}>{children}</body>
     </html>
   );
 }
