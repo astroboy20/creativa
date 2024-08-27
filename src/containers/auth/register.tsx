@@ -1,9 +1,12 @@
 "use client"
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import React from 'react';
+import {useState} from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import {auth} from "../../firebase/firebaseConfig"
+import Cookies from "js-cookie"
+import { ClipLoader } from 'react-spinners';
 type Inputs = {
     name: string;
     email: string;
@@ -11,11 +14,35 @@ type Inputs = {
     confirmPassword:string
 }
 const Register = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(false)
   const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
 
-  const onSubmit:SubmitHandler<Inputs> = (data) => {
+  const onSubmit:SubmitHandler<Inputs> =async (data) => {
+    setIsLoading(true)
     // Handle registration logic here
-    console.log(data);
+    if(data.password !== data.confirmPassword){
+        alert("Password do not match!")
+    }
+    try{
+        //create user
+        const userCredentials = await createUserWithEmailAndPassword(auth, data.email, data.password)
+        const user = userCredentials.user
+        await updateProfile(user,{displayName:data.name})
+
+        //token
+        const token =await user.getIdToken()
+        Cookies.set("token",token,{expires:7})
+
+       
+        console.log("User registered with name:", user.displayName);
+    }catch(error){
+        console.error("Error registering user:", error);
+      alert("Failed to create an account. Please try again.");
+    }finally{
+        setIsLoading(false)
+    }
+
+   
   };
 
   return (
@@ -71,7 +98,9 @@ const Register = () => {
             {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
           </div>
 
-          <Button type="submit" className="bg-[#501078] text-white py-2 px-4 rounded mt-4">Register</Button>
+          <Button type="submit" className="bg-[#501078] text-white py-2 px-4 rounded mt-4">
+            {isLoading  ? <ClipLoader color='#fff'/> :"Register"}
+          </Button>
         </form>
       </div>
     </div>
