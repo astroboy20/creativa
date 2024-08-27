@@ -15,4 +15,4 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({ title, value }) => {
   );
 };
 
-export default PerformanceCard;
+export  {PerformanceCard};
