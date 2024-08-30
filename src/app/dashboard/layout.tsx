@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaBars, FaTimes, FaHome, FaChartLine, FaCogs } from "react-icons/fa";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "@/firebase/firebaseConfig";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 
 type LayoutProps = {
@@ -24,7 +24,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-
         setUser({
           uid: user.uid,
           email: user.email,
@@ -40,12 +39,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  const handleLogout = ()=>{
-    Cookies.remove("token")
-    setUser(null)
-    router.push("/login")
-    toast.success("User Logged out successfully")
-  }
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        Cookies.remove("token");
+        setUser(null);
+        router.push("/login");
+        toast.success("User Logged out successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-gray-100">
@@ -83,12 +88,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               Account Settings
             </p>
           </Link>
-         
-            <p className="flex items-center py-2.5  rounded hover:bg-[#ECD2FC66]" onClick={handleLogout}>
-              <FaCogs className="mr-2" />
-             Logout
-            </p>
-         
+
+          <p
+            className="flex items-center py-2.5  rounded hover:bg-[#ECD2FC66]"
+            onClick={handleLogout}
+          >
+            <FaCogs className="mr-2" />
+            Logout
+          </p>
         </nav>
       </aside>
 
