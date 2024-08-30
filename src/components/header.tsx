@@ -12,13 +12,13 @@ const Header = () => {
   };
 
   return (
-    <div className="flex justify-between items-center px-[6%] py-[3%] bg-white">
+    <div className="flex justify-between items-center px-[6%] py-[3%] bg-white relative">
       <h1 className="text-[28px] md:text-[32px] font-[700] text-[#501078]">
         Creativa
       </h1>
 
       {/* Hamburger menu for small screens */}
-      <div className="md:hidden">
+      <div className="md:hidden z-30">
         {menuOpen ? (
           <MdCancel size={28} onClick={toggleMenu} className="cursor-pointer" />
         ) : (
@@ -32,18 +32,23 @@ const Header = () => {
 
       {/* Navbar links for medium to large screens */}
       <div className="hidden md:flex gap-10 items-center text-[20px]">
-        <p>Explore</p>
-        <p>Connect</p>
-        <p>About</p>
+        <Link href="/explore">
+          <p>Explore</p>
+        </Link>
+        <Link href="/connect">
+          <p>Connect</p>
+        </Link>
+        <Link href="/about">
+          <p>About</p>
+        </Link>
       </div>
 
       {/* Authentication buttons for medium to large screens */}
       <div className="hidden md:flex gap-10 items-center text-[20px]">
-        <Link href={"/login"}>
-          {" "}
+        <Link href="/login">
           <p>Sign in</p>
         </Link>
-        <Link href={"/register"}>
+        <Link href="/register">
           <p className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]">
             Sign up
           </p>
@@ -52,19 +57,24 @@ const Header = () => {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white shadow-md md:hidden">
-          <div className="flex flex-col items-center gap-4 py-4 text-[20px]">
-            <p onClick={toggleMenu}>Explore</p>
-            <p onClick={toggleMenu}>Connect</p>
-            <p onClick={toggleMenu}>About</p>
-            <p onClick={toggleMenu}>Sign in</p>
-            <p
-              onClick={toggleMenu}
-              className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]"
-            >
+        <div className="fixed top-0 left-0 w-full h-full bg-white text-black shadow-md md:hidden z-20 flex flex-col items-center justify-center gap-8 text-[24px]">
+          <Link href="/explore" onClick={toggleMenu}>
+            Explore
+          </Link>
+          <Link href="/connect" onClick={toggleMenu}>
+            Connect
+          </Link>
+          <Link href="/about" onClick={toggleMenu}>
+            About
+          </Link>
+          <Link href="/login" onClick={toggleMenu}>
+            Sign in
+          </Link>
+          <Link href="/register" onClick={toggleMenu}>
+            <p className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]">
               Sign up
             </p>
-          </div>
+          </Link>
         </div>
       )}
     </div>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const Hero = () => {
@@ -12,10 +13,11 @@ const Hero = () => {
         <span className="text-[#501078]">creativa</span>, where you can create,
         <br className="hidden md:block" /> showcase, and publish your ideas.
       </p>
-
-      <span className="bg-[#501078] text-white py-[10px] px-[20px] md:px-[24px] lg:px-[28px] rounded-[8px] w-fit m-auto text-[16px] md:text-[18px] lg:text-[20px]">
-        Get Started
-      </span>
+      <Link href="/register">
+        <span className="bg-[#501078] text-white py-[10px] px-[20px] md:px-[24px] lg:px-[28px] rounded-[8px] w-fit m-auto text-[16px] md:text-[18px] lg:text-[20px]">
+          Get Started
+        </span>
+      </Link>
     </div>
   );
 };

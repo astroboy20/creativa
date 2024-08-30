@@ -7,6 +7,8 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebaseConfig";
 import Cookies from "js-cookie";
 import { ClipLoader } from "react-spinners";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type Inputs = {
   email: string;
@@ -15,6 +17,7 @@ type Inputs = {
   passwordRequired: string;
 };
 const Login = () => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     register,
@@ -38,6 +41,7 @@ const Login = () => {
 
       Cookies.set("token", token, { expires: 7 });
       console.log("User logged in and token stored in cookie:", token);
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error logging in:", error);
       alert("Failed to log in. Please try again.");
@@ -88,12 +92,20 @@ const Login = () => {
             )}
           </div>
 
-          <Button
-            type="submit"
-            className="bg-[#501078] text-white py-2 px-4 rounded mt-4"
-          >
-            {isLoading ? <ClipLoader color="#fff" /> : "Login"}
-          </Button>
+          <div className="flex flex-col gap-1 text-center">
+            <Button
+              type="submit"
+              className="bg-[#501078] text-white py-2 px-4 rounded mt-4"
+            >
+              {isLoading ? <ClipLoader color="#fff" /> : "Login"}
+            </Button>
+            <p>
+              Don't have an account?,
+              <Link href={"/register"} className="font-bold underline">
+                Register
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </div>

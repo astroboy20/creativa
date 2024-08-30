@@ -1,8 +1,25 @@
+"use client";
 import { creators } from "@/lib/data";
 import Image from "next/image";
-import React from "react";
+import { useEffect } from "react";
+import { fireStore } from "@/firebase/firebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
 
 const Meet = () => {
+  const getCreatorsData = collection(fireStore, "creators");
+  const getCreators = async () => {
+    try {
+      const data = await getDocs(getCreatorsData);
+      const filteredData = data?.docs?.map((doc)=>({...doc.data(), id:doc.id}))
+      console.log(filteredData);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getCreators();
+  }, [getCreatorsData]);
   return (
     <div className="px-[6%] py-[5%] w-full">
       <h1 className="text-[24px] sm:text-[32px] md:text-[40px] lg:text-[48px] font-bold mb-4 text-center">
@@ -22,7 +39,9 @@ const Meet = () => {
               className="rounded-[16px] object-cover w-full h-auto"
             />
             <div className="absolute bottom-4 left-4">
-              <p className="mb-2 text-sm sm:text-lg md:text-xl font-bold">{data.name}</p>
+              <p className="mb-2 text-sm sm:text-lg md:text-xl font-bold">
+                {data.name}
+              </p>
               <div className="flex gap-3 items-center flex-wrap">
                 {data.categories.map((category, index) => (
                   <div key={index}>
