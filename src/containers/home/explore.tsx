@@ -12,13 +12,15 @@ const Explore = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
         {exploreData.map((data) => (
           <div key={data.id} className="bg-white p-4 rounded-lg shadow-lg lg:bg-none lg:rounded-none lg:shadow-none">
-            <Image
-              src={data.src}
-              alt="creator's image"
-              width={300}
-              height={300}
-              className="rounded-[16px] object-cover w-full h-auto"
-            />
+            <div className="w-full h-[300px] relative"> {/* Container with fixed dimensions */}
+              <Image
+                src={data.src}
+                alt="creator's image"
+                layout="fill" // This makes the image fill the container
+                objectFit="cover" // Ensures the image covers the entire container
+                className="rounded-[16px]"
+              />
+            </div>
             <div className="flex justify-between items-center mt-4">
               <div className="flex items-center gap-2">
                 <Image

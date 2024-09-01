@@ -17,15 +17,21 @@ export interface CreatorData {
   name: string;
   categories: string;
   src: string;
-  rating: number;
+  rating: number[];
   profileName: string | any;
   profileImage: string | any;
+  description: string;
 }
 
-const CreatorForm: React.FC = () => {
+interface CreatorFormProps {
+  onClose: () => void; // New prop to handle dialog close
+}
+
+const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
   const [name, setName] = useState("");
   const [categories, setCategories] = useState<any>("");
   const [imageSrc, setImageSrc] = useState("");
+  const [description, setDecription] = useState("");
   const [imageFile, setImageFile] = useState<File | null | any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const categoryOptions = [
@@ -51,40 +57,47 @@ const CreatorForm: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     let imageUrl = "";
-
+  
     if (imageFile) {
       const imageRef = ref(storage, `creator/${imageFile.name}`);
-      await uploadBytes(imageRef, imageFile);
-      imageUrl = await getDownloadURL(imageRef);
+      try {
+        await uploadBytes(imageRef, imageFile);
+        imageUrl = await getDownloadURL(imageRef);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     }
-
+  
     const creatorData: CreatorData = {
       name,
       categories,
       src: imageUrl,
-      rating: 0,
+      rating: [], // Initialize as an empty array
       profileName: auth?.currentUser?.displayName,
       profileImage: auth?.currentUser?.photoURL,
+      description,
     };
+  
     try {
       await addDoc(getCreatorsDataRef, creatorData);
-
       setName("");
       setCategories("");
       setImageSrc("");
-      setImageFile("");
+      setImageFile(null); // Correctly reset the image file
+      onClose(); // Ensure dialog is closed
     } catch (error) {
-      console.log(error);
+      console.error("Error adding document:", error);
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <form onSubmit={handleSubmit} className="p-6">
       <div className="mb-4">
         <label htmlFor="name" className="block text-sm font-medium">
-          Name
+          Name of Project
         </label>
         <Input
           id="name"
@@ -116,7 +129,19 @@ const CreatorForm: React.FC = () => {
           </SelectContent>
         </Select>
       </div>
-
+      <div className="mb-4">
+        <label htmlFor="description" className="block text-sm font-medium">
+          Description
+        </label>
+        <textarea
+          id="description"
+          placeholder="Enter your Description"
+          value={description}
+          onChange={(e) => setDecription(e.target.value)}
+          required
+          className="w-full p-3 border"
+        />
+      </div>
       <div className="mb-4">
         <label htmlFor="image" className="block text-sm font-medium">
           Image
@@ -129,17 +154,11 @@ const CreatorForm: React.FC = () => {
         />
       </div>
 
-      {/* {imageSrc && (
-        <div className="mb-4">
-          <img src={imageSrc} alt="Profile Preview" className="rounded-md" />
-        </div>
-      )} */}
-
       <Button
         type="submit"
         className="w-full bg-[#501078] h-[45px] text-white hover:bg-transparent hover:text-[#501078] hover:border-2 hover:border-[#501078]"
       >
-        {isLoading ? <ClipLoader color="#fff" /> : "  Create Idea"}
+        {isLoading ? <ClipLoader color="#fff" /> : "Create Idea"}
       </Button>
     </form>
   );
