@@ -20,6 +20,7 @@ export interface CreatorData {
   rating: number[];
   profileName: string | any;
   profileImage: string | any;
+  email: string | any;
   description: string;
 }
 
@@ -57,7 +58,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
     e.preventDefault();
     setIsLoading(true);
     let imageUrl = "";
-  
+
     if (imageFile) {
       const imageRef = ref(storage, `creator/${imageFile.name}`);
       try {
@@ -67,7 +68,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
         console.error("Error uploading image:", error);
       }
     }
-  
+
     const creatorData: CreatorData = {
       name,
       categories,
@@ -75,9 +76,10 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
       rating: [], // Initialize as an empty array
       profileName: auth?.currentUser?.displayName,
       profileImage: auth?.currentUser?.photoURL,
+      email: auth?.currentUser?.email,
       description,
     };
-  
+
     try {
       await addDoc(getCreatorsDataRef, creatorData);
       setName("");
@@ -91,7 +93,6 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
       setIsLoading(false);
     }
   };
-  
 
   return (
     <form onSubmit={handleSubmit} className="p-6">

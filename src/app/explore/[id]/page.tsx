@@ -6,9 +6,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { fireStore } from "@/firebase/firebaseConfig";
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AiFillStar, AiOutlineArrowLeft, AiOutlineStar } from "react-icons/ai";
+import { MdEmail } from "react-icons/md";
 import { ClipLoader } from "react-spinners";
 
 interface RatingType {
@@ -21,6 +23,7 @@ interface ProjectType {
   id: string;
   name: string;
   categories: string;
+  email: string;
   description: string;
   src: string;
   profileImage: string | any;
@@ -44,6 +47,7 @@ export default function Page() {
 
         if (docSnap.exists()) {
           const projectData = docSnap.data() as ProjectType;
+          console.log("fg", projectData);
           projectData.rating = projectData.rating || [];
           setProject(projectData);
         } else {
@@ -53,6 +57,7 @@ export default function Page() {
       fetchProjectDetails();
     }
   }, [id]);
+  console.log(project);
 
   const handleSubmit = async () => {
     if (project && id && userComment.trim() && userRating > 0) {
@@ -79,9 +84,11 @@ export default function Page() {
     }
   };
 
-  const averageRating = project && project.rating.length > 0
-    ? project.rating.reduce((acc, cur) => acc + cur.rating, 0) / project.rating.length
-    : 0;
+  const averageRating =
+    project && project.rating.length > 0
+      ? project.rating.reduce((acc, cur) => acc + cur.rating, 0) /
+        project.rating.length
+      : 0;
 
   if (!project)
     return (
@@ -97,7 +104,7 @@ export default function Page() {
           onClick={() => router.back()}
           className="mr-4 p-2 rounded-full bg-gray-200 hover:bg-gray-300"
         >
-          <AiOutlineArrowLeft size={24} color="black"/>
+          <AiOutlineArrowLeft size={24} color="black" />
         </Button>
       </div>
       <div className="flex flex-col items-center">
@@ -111,11 +118,21 @@ export default function Page() {
         <h1 className="text-[24px] sm:text-[32px] md:text-[40px] lg:text-[48px] font-bold my-6">
           {project.name}
         </h1>
+
+        <Link href={`mailto:${project.email}`}>
+          <p className="flex bg-[#501078] text-white items-center gap-2 p-3 rounded-sm mb-5">
+            <MdEmail /> Hire me
+          </p>
+        </Link>
+
+      
+
         <div className="flex gap-3">
           <p className="rounded-[16px] bg-gray-200 px-3 py-1 text-sm sm:text-lg">
             {project.categories}
           </p>
         </div>
+
         <div className="flex mt-4 items-center">
           <span className="text-xl font-bold mr-2">Average Rating: </span>
           <div className="flex">
@@ -130,7 +147,11 @@ export default function Page() {
             ))}
           </div>
           <span className="ml-2 text-lg">
-            ({typeof averageRating === "number" ? averageRating.toFixed(1) : "0.0"})
+            (
+            {typeof averageRating === "number"
+              ? averageRating.toFixed(1)
+              : "0.0"}
+            )
           </span>
         </div>
         <p className="mt-4 text-center max-w-2xl">{project.description}</p>
