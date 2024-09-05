@@ -3,7 +3,7 @@ import React from "react";
 
 const Hero = () => {
   return (
-    <div className="flex flex-col gap-5 text-center px-4 md:px-8 lg:px-16 py-[10%] lg:pb-[5%] lg:pt-[5%]">
+    <div className="flex flex-col gap-5 text-center px-4 pt-[25%] md:px-8 lg:px-16 py-[10%] lg:pb-[5%] lg:pt-[10%] ">
       <h1 className="text-[32px] md:text-[40px] lg:text-[48px] font-bold">
         Welcome to Creativa, <br className="hidden md:block" /> Where Expertise
         Meets Creativity.
