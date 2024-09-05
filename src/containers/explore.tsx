@@ -1,78 +1,23 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { collection, getDocs } from "firebase/firestore";
-import { fireStore } from "@/firebase/firebaseConfig";
 import { ClipLoader } from "react-spinners";
+import { useFetchItem } from "@/hooks/useFetchItem";
+import { ExploreType } from "@/lib/types";
 
-interface RatingType {
-  user: string;
-  rating: number;
-  comment?: string;
-}
 
-interface ExploreType {
-  id: string;
-  name: string;
-  categories: string;
-  src: string;
-  profileName: string;
-  profileImage: string;
-  rating: number | RatingType[];
-  description?: string;
-  averageRating?: number;
-}
 
 const Explore = () => {
   const router = useRouter();
-  const [creators, setCreators] = useState<ExploreType[]>([]);
-  const [initialLoading, setInitialLoading] = useState<boolean>(true); // Track initial loading
-
-  const fetchCreators = async () => {
-    console.log("Fetching creators...");
-    try {
-      const data = await getDocs(collection(fireStore, "creators"));
-      const filteredData = data.docs.map((doc) => {
-        const docData = doc.data() as ExploreType;
-
-        // Calculate average rating
-        let averageRating = 0;
-        if (Array.isArray(docData.rating)) {
-          if (docData.rating.length > 0) {
-            averageRating =
-              docData.rating.reduce((acc, cur) => acc + cur.rating, 0) /
-              docData.rating.length;
-          }
-        } else {
-          averageRating = docData.rating; // If it's a number, use it directly
-        }
-
-        return { ...docData, id: doc.id, averageRating };
-      });
-      setCreators(filteredData);
-      console.log("Creators fetched successfully");
-    } catch (err) {
-      console.error("Error fetching creators:", err);
-    } finally {
-      setInitialLoading(false); // Set initial loading to false after fetch
-    }
-  };
-
-  useEffect(() => {
-    fetchCreators();
-
-    const intervalId = setInterval(fetchCreators, 1000); // Fetch every second
-
-    return () => clearInterval(intervalId); // Cleanup on unmount
-  }, []);
+  const { data: projects = [], isLoading } = useFetchItem({ collectionName: "creators" });
 
   const handleClick = (id: string) => {
     router.push(`/explore/${id}`);
   };
 
-  if (initialLoading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[100svh]">
         <ClipLoader color="#501078" />
@@ -83,7 +28,7 @@ const Explore = () => {
   return (
     <div className="px-4 sm:px-[6%] w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
-        {creators.map((creator) => (
+        {projects.map((creator: ExploreType) => (
           <div
             key={creator.id}
             className="bg-white p-4 rounded-lg shadow-lg lg:bg-none lg:rounded-none lg:shadow-none cursor-pointer"
@@ -97,13 +42,11 @@ const Explore = () => {
               className="rounded-[16px] object-cover w-full h-auto"
             />
             <div className="flex justify-between items-center mt-4">
-              <div className="flex items-center gap-2">
-                <Image
+              <div className="flex items-center gap-2 w-[30px] h-[30px] rounded-full">
+                <img
                   src={creator.profileImage}
-                  width={30}
-                  height={30}
                   alt="profile-image"
-                  className="rounded-full"
+                  className="rounded-full w-full h-full"
                 />
                 <p className="text-sm sm:text-lg md:text-[16px] font-bold">
                   {creator.profileName}

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Stardos_Stencil } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
+import { ReactQueryClientProvider } from "@/provider/provider";
 
 const inter = Inter({ subsets: ["latin"] });
 const stardos_stencil = Stardos_Stencil({
@@ -24,8 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={stardos_stencil.className}>
-        <ToastContainer />
-        {children}
+        <ReactQueryClientProvider>
+          <ToastContainer />
+          {children}
+        </ReactQueryClientProvider>
       </body>
     </html>
   );

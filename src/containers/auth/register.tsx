@@ -4,13 +4,14 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth, storage } from "../../firebase/firebaseConfig"; // Import storage
+import { auth, fireStore, storage } from "../../firebase/firebaseConfig"; // Import storage
 import Cookies from "js-cookie";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Firebase Storage utilities
 import { toast } from "react-toastify";
+import { doc, setDoc } from "firebase/firestore";
 
 type Inputs = {
   name: string;
@@ -69,6 +70,15 @@ const Register = () => {
       toast.success("Registration Successful");
 
       // Navigate to dashboard
+
+      await setDoc(doc(fireStore, "users", user.uid), {
+        uid: user.uid,
+        name: data.name,
+        email: data.email,
+        category: data.category,
+        profilePictureURL: profilePictureURL,
+        createdAt: new Date().toISOString(),
+      });
       router.push("/dashboard");
     } catch (error: any) {
       toast.error(

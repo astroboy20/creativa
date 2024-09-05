@@ -9,7 +9,7 @@ export const fetchUserData = async () => {
       uid: user.uid,
       email: user.email,
       displayName: user.displayName,
-    //   photoURL: user.photoURL,
+      photoURL: user.photoURL,
     };
   } else {
     // User is not signed in

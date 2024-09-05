@@ -1,34 +1,78 @@
-import { exploreData } from "@/lib/data";
+"use client";
+import { useFetchItem } from "@/hooks/useFetchItem";
+import { ExploreType } from "@/lib/types";
 import Image from "next/image";
-import React from "react";
+import { useRouter } from "next/navigation";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { ClipLoader } from "react-spinners";
+
+const processCreatorsData = (data: any[]) => {
+  return data.map((docData: any) => {
+    let averageRating = 0;
+    if (Array.isArray(docData.rating)) {
+      if (docData.rating.length > 0) {
+        averageRating =
+          docData.rating.reduce(
+            (acc: number, cur: any) => acc + cur.rating,
+            0
+          ) / docData.rating.length;
+      }
+    } else {
+      averageRating = docData.rating;
+    }
+
+    return { ...docData, averageRating };
+  });
+};
 
 const Explore = () => {
+  const router = useRouter();
+  const { data: creators = [], isLoading } = useFetchItem({
+    collectionName: "creators",
+    processData: processCreatorsData,
+  });
+
+  const handleClick = (id: string) => {
+    router.push(`/explore/${id}`);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[100svh]">
+        <ClipLoader color="#501078" />
+      </div>
+    );
+  }
+
   return (
     <div className="px-4 sm:px-[6%] py-[5%] w-full">
       <h1 className="text-[24px] sm:text-[32px] md:text-[40px] lg:text-[48px] font-bold mb-6 text-center">
         Explore
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
-        {exploreData.map((data) => (
-          <div key={data.id} className="bg-white p-4 rounded-lg shadow-lg lg:bg-none lg:rounded-none lg:shadow-none">
-            <div className="w-full h-[300px] relative"> {/* Container with fixed dimensions */}
+        {creators.map((data: ExploreType) => (
+          <div
+            key={data.id}
+            className="bg-white p-4 rounded-lg shadow-lg lg:bg-none lg:rounded-none lg:shadow-none"
+          >
+            <div className="w-auto h-[300px] relative">
               <Image
                 src={data.src}
                 alt="creator's image"
-                layout="fill" // This makes the image fill the container
-                objectFit="cover" // Ensures the image covers the entire container
-                className="rounded-[16px]"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-[16px] w-full h-full"
               />
             </div>
             <div className="flex justify-between items-center mt-4">
-              <div className="flex items-center gap-2">
+              <div className="flex w-[30px] h-[30px] items-center gap-2">
                 <Image
-                  src={data.profile}
+                  src={data.profileImage}
                   width={30}
                   height={30}
+                  objectFit="cover"
                   alt="profile-image"
-                  className="rounded-full"
+                  className="rounded-full w-full h-full"
                 />
                 <p className="text-sm sm:text-lg md:text-[16px] font-bold">
                   {data.name}
@@ -37,7 +81,7 @@ const Explore = () => {
               <div className="flex items-center">
                 {Array.from({ length: 5 }, (_, index) => (
                   <span key={index}>
-                    {data.rating > index ? (
+                    {data.averageRating! > index ? (
                       <AiFillStar className="text-[#FFD700]" size={18} />
                     ) : (
                       <AiOutlineStar className="text-[#FFD700]" size={18} />
