@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CreatorData, CreatorForm } from "./creator";
+import { CreatorForm } from "./creator";
 
 const Header = () => {
   const pathName = usePathname();
@@ -33,7 +33,7 @@ const Header = () => {
   };
 
   return (
-    <div className="flex justify-between items-center px-[6%] py-[3%] bg-white relative">
+    <div className="fixed flex justify-between items-center px-[6%] py-[3%] lg:py-[2%] bg-white w-full z-50">
       <div className="flex gap-14 items-center text-[20px]">
         <h1 className="text-[28px] md:text-[32px] font-[700] text-[#501078]">
           Creativa
@@ -64,20 +64,27 @@ const Header = () => {
       {pathName === "/explore" ? (
         <div className="flex gap-5 items-center">
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger className="hidden lg:flex border-2 border-[#501078] text-[#501078] py-[8px] px-[28px] rounded-[8px]" onClick={handleDialogOpen}>
+            <DialogTrigger
+              className="hidden lg:flex border-2 border-[#501078] text-[#501078] py-[8px] px-[28px] rounded-[8px]"
+              onClick={handleDialogOpen}
+            >
               Create
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Fill the form below</DialogTitle>
                 <DialogDescription>
-                  Fill out the form below to showcase and publish your creative ideas.
+                  Fill out the form below to showcase and publish your creative
+                  ideas.
                 </DialogDescription>
               </DialogHeader>
               <CreatorForm onClose={handleDialogClose} />
             </DialogContent>
           </Dialog>
-          <Input placeholder="Search" className="hidden lg:flex border border-[#501078]" />
+          <Input
+            placeholder="Search"
+            className="hidden lg:flex border border-[#501078]"
+          />
         </div>
       ) : (
         <div className="hidden md:flex gap-10 items-center text-[20px]">
@@ -93,25 +100,37 @@ const Header = () => {
       )}
 
       {/* Hamburger menu for small screens */}
+
       <div className="md:hidden z-30 flex items-center gap-3">
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger className="border-2 border-[#501078] text-[#501078] py-[5px] px-[20px] rounded-[8px]" onClick={handleDialogOpen}>
-            Create
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Fill the form below</DialogTitle>
-              <DialogDescription>
-                Fill out the form below to showcase and publish your creative ideas.
-              </DialogDescription>
-            </DialogHeader>
-            <CreatorForm onClose={handleDialogClose} />
-          </DialogContent>
-        </Dialog>
+        {pathName === "/explore" && (
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger
+              className="border-2 border-[#501078] text-[#501078] py-[5px] px-[20px] rounded-[8px]"
+              onClick={handleDialogOpen}
+            >
+              Create
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Fill the form below</DialogTitle>
+                <DialogDescription>
+                  Fill out the form below to showcase and publish your creative
+                  ideas.
+                </DialogDescription>
+              </DialogHeader>
+              <CreatorForm onClose={handleDialogClose} />
+            </DialogContent>
+          </Dialog>
+        )}
+
         {menuOpen ? (
           <MdCancel size={28} onClick={toggleMenu} className="cursor-pointer" />
         ) : (
-          <GiHamburgerMenu size={28} onClick={toggleMenu} className="cursor-pointer" />
+          <GiHamburgerMenu
+            size={28}
+            onClick={toggleMenu}
+            className="cursor-pointer"
+          />
         )}
       </div>
 
@@ -140,7 +159,5 @@ const Header = () => {
     </div>
   );
 };
-
-
 
 export { Header };
