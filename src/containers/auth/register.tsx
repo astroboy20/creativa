@@ -187,6 +187,8 @@ const Register = () => {
               <option value="Photography">Photography</option>
               <option value="Design">Design</option>
               <option value="Music">Music</option>
+              <option value="Tech">Tech</option>
+              <option value="Vlog">Vlog</option>
               {/* Add more categories as needed */}
             </select>
             {errors.category && (

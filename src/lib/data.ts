@@ -127,7 +127,7 @@ export const categoriesData = [
     },
     {
         id: 3,
-        src: "/images/categories/c.png",
+        src: "/images/categories/d.png",
         name: "Food",
     },
     {
@@ -137,7 +137,7 @@ export const categoriesData = [
     },
     {
         id: 5,
-        src: "/images/categories/d.png",
+        src: "/images/categories/c.png",
         name: "Vlog",
     },
     {

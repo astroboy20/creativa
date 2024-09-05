@@ -1,4 +1,3 @@
-import { useFetchItem } from "@/hooks/useFetchItem";
 import Link from "next/link";
 import React from "react";
 
@@ -17,7 +16,7 @@ const Connect = () => {
           on Creativa.
         </p>
       </div>
-      <Link href={"/register"}>
+      <Link href={"/connect"}>
         <span className="bg-[#501078] text-white py-2 px-4 sm:py-[10px] sm:px-[20px] md:px-[24px] lg:px-[28px] rounded-[8px] w-fit mx-auto text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px]">
           Connect
         </span>

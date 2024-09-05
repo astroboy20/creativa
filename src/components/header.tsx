@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { CreatorForm } from "./creator";
+import { auth } from "@/firebase/firebaseConfig";
 
 const Header = () => {
   const pathName = usePathname();
@@ -32,6 +33,7 @@ const Header = () => {
     setDialogOpen(true);
   };
 
+  const user = auth?.currentUser;
   return (
     <div className="fixed flex justify-between items-center px-[6%] py-[3%] lg:py-[2%] bg-white w-full z-50">
       <div className="flex gap-14 items-center text-[20px]">
@@ -146,14 +148,26 @@ const Header = () => {
           <Link href="/about" onClick={toggleMenu}>
             About
           </Link>
-          <Link href="/login" onClick={toggleMenu}>
-            Sign in
-          </Link>
-          <Link href="/register" onClick={toggleMenu}>
+
+          {user ? (
+            <Link href="/register" onClick={toggleMenu}>
             <p className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]">
-              Sign up
+             Logout
             </p>
           </Link>
+          ) : (
+            <div className="flex flex-col gap-5 text-center">
+              {" "}
+              <Link href="/login" onClick={toggleMenu}>
+                Sign in
+              </Link>
+              <Link href="/register" onClick={toggleMenu}>
+                <p className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]">
+                  Sign up
+                </p>
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </div>

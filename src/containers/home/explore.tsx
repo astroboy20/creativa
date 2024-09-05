@@ -6,43 +6,19 @@ import { useRouter } from "next/navigation";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { ClipLoader } from "react-spinners";
 
-const processCreatorsData = (data: any[]) => {
-  return data.map((docData: any) => {
-    let averageRating = 0;
-    if (Array.isArray(docData.rating)) {
-      if (docData.rating.length > 0) {
-        averageRating =
-          docData.rating.reduce(
-            (acc: number, cur: any) => acc + cur.rating,
-            0
-          ) / docData.rating.length;
-      }
-    } else {
-      averageRating = docData.rating;
-    }
+type ExploreProps = {
+  creators: any
+}
 
-    return { ...docData, averageRating };
-  });
-};
-
-const Explore = () => {
+const Explore = ({creators}:ExploreProps) => {
   const router = useRouter();
-  const { data: creators = [], isLoading } = useFetchItem({
-    collectionName: "creators",
-    processData: processCreatorsData,
-  });
+
 
   const handleClick = (id: string) => {
     router.push(`/explore/${id}`);
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-[100svh]">
-        <ClipLoader color="#501078" />
-      </div>
-    );
-  }
+
 
   return (
     <div className="px-4 sm:px-[6%] py-[5%] w-full">
@@ -50,7 +26,7 @@ const Explore = () => {
         Explore
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
-        {creators.map((data: ExploreType) => (
+        {creators?.map((data: ExploreType) => (
           <div
             key={data.id}
             className="bg-white p-4 rounded-lg shadow-lg lg:bg-none lg:rounded-none lg:shadow-none"
