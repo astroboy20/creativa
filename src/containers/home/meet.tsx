@@ -1,10 +1,5 @@
 "use client";
-import { creators } from "@/lib/data";
 import Image from "next/image";
-import { useEffect } from "react";
-import { fireStore } from "@/firebase/firebaseConfig";
-import { collection, getDocs } from "firebase/firestore";
-import { useFetchItem } from "@/hooks/useFetchItem";
 
 type MeetProps = {
   users: any;

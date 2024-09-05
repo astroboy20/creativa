@@ -7,11 +7,11 @@ import { ClipLoader } from "react-spinners";
 import { useFetchItem } from "@/hooks/useFetchItem";
 import { ExploreType } from "@/lib/types";
 
-
-
 const Explore = () => {
   const router = useRouter();
-  const { data: projects = [], isLoading } = useFetchItem({ collectionName: "creators" });
+  const { data: projects = [], isLoading } = useFetchItem({
+    collectionName: "creators",
+  });
 
   const handleClick = (id: string) => {
     router.push(`/explore/${id}`);
@@ -26,7 +26,7 @@ const Explore = () => {
   }
 
   return (
-    <div className="px-4 sm:px-[6%] w-full">
+    <div className="pt-[25%] lg:pt-[10%] px-4 sm:px-[6%] w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
         {projects.map((creator: ExploreType) => (
           <div
