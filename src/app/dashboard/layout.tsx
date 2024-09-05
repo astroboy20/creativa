@@ -37,7 +37,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   const handleLogout = () => {
     signOut(auth)
@@ -45,10 +45,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         Cookies.remove("token");
         setUser(null);
         router.push("/login");
-        toast.success("User Logged out successfully");
+        toast.success("User logged out successfully");
       })
       .catch((error) => {
         console.log(error);
+        toast.error("Failed to log out. Please try again.");
       });
   };
 
@@ -56,9 +57,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="flex flex-col md:flex-row h-screen bg-gray-100">
       {/* Sidebar */}
       <aside
-        className={`${
+        className={`fixed md:static w-64 h-full bg-[#501078] text-white p-6 transform transition-transform duration-300 ease-in-out z-50 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } fixed md:static w-full h-full bg-[#501078] text-white p-6 md:h-full transform md:translate-x-0 transition-transform duration-300 ease-in-out z-50`}
+        } md:translate-x-0`}
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">My Dashboard</h2>
@@ -83,14 +84,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </p>
           </Link>
           <Link href="/dashboard/settings">
-            <p className="flex items-center py-2.5  rounded hover:bg-[#ECD2FC66]">
+            <p className="flex items-center py-2.5 rounded hover:bg-[#ECD2FC66]">
               <FaCogs className="mr-2" />
               Account Settings
             </p>
           </Link>
-
           <p
-            className="flex items-center py-2.5  rounded hover:bg-[#ECD2FC66]"
+            className="flex items-center py-2.5 rounded hover:bg-[#ECD2FC66] cursor-pointer"
             onClick={handleLogout}
           >
             <FaCogs className="mr-2" />
@@ -114,7 +114,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <button className="relative z-10 block w-8 h-8 rounded-full overflow-hidden shadow focus:outline-none">
               <img
                 className="w-full h-full object-cover"
-                src={user?.photoURL}
+                src={user?.photoURL || "/default-avatar.png"} 
                 alt="User avatar"
               />
             </button>

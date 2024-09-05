@@ -4,22 +4,14 @@ import Image from "next/image";
 import { useEffect } from "react";
 import { fireStore } from "@/firebase/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
+import { useFetchItem } from "@/hooks/useFetchItem";
 
 const Meet = () => {
-  const getCreatorsData = collection(fireStore, "creators");
-  const getCreators = async () => {
-    try {
-      const data = await getDocs(getCreatorsData);
-      const filteredData = data?.docs?.map((doc)=>({...doc.data(), id:doc.id}))
-      console.log(filteredData);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    getCreators();
-  }, [getCreatorsData]);
+  const { data: users = [], isLoading } = useFetchItem({ collectionName: "users" });
+  console.log("data", users);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="px-[6%] py-[5%] w-full">
       <h1 className="text-[24px] sm:text-[32px] md:text-[40px] lg:text-[48px] font-bold mb-4 text-center">

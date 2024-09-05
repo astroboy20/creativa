@@ -1,17 +1,26 @@
 "use client";
 import { fireStore } from "@/firebase/firebaseConfig";
 import { useQuery } from "@tanstack/react-query";
-import { collection, getDocs, query, QueryConstraint } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  QueryConstraint,
+} from "firebase/firestore";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 interface FireStoreDataProps {
   collectionName: string;
-  queryConstraints?: QueryConstraint[]; 
+  queryConstraints?: QueryConstraint[];
   processData?: (data: any[]) => any[]; // Function to process data
 }
 
-export const useFetchItem = ({ collectionName, queryConstraints, processData }: FireStoreDataProps) => {
+export const useFetchItem = ({
+  collectionName,
+  queryConstraints,
+  processData,
+}: FireStoreDataProps) => {
   const router = useRouter();
   const token = Cookies.get("token");
 
@@ -19,10 +28,10 @@ export const useFetchItem = ({ collectionName, queryConstraints, processData }: 
     queryKey: [collectionName, queryConstraints],
     queryFn: async () => {
       try {
-        if (!token) {
-          router.push("/login");
-          throw new Error("Authentication required");
-        }
+        // if (!token) {
+        //   router.push("/login");
+        //   throw new Error("Authentication required");
+        // }
 
         const collectionRef = collection(fireStore, collectionName);
 
@@ -44,6 +53,6 @@ export const useFetchItem = ({ collectionName, queryConstraints, processData }: 
         console.error("Error fetching Firestore data:", error.message);
         throw new Error(error?.message || "Error fetching data from Firestore");
       }
-    }
+    },
   });
 };

@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "react-toastify"; 
 
 type Inputs = {
   email: string;
@@ -16,6 +17,7 @@ type Inputs = {
   password: string;
   passwordRequired: string;
 };
+
 const Login = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -26,25 +28,24 @@ const Login = () => {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    // Handle login logic here
-    console.log(data);
     setIsLoading(true);
     try {
       const userCridentials = await signInWithEmailAndPassword(
         auth,
         data.email,
-        data.email
+        data.password // Corrected here
       );
       const user = userCridentials.user;
 
-      const token = await user.getIdToken();
+      // Show success toast
+      toast.success("Successfully logged in!");
 
-      Cookies.set("token", token, { expires: 7 });
-      console.log("User logged in and token stored in cookie:", token);
+      // Navigate to dashboard
       router.push("/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error logging in:", error);
-      alert("Failed to log in. Please try again.");
+      toast.error("Failed to log in. Please try again.");
+      console.log(error.code);
     } finally {
       setIsLoading(false);
     }

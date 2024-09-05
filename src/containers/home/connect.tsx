@@ -1,7 +1,10 @@
+import { useFetchItem } from "@/hooks/useFetchItem";
 import Link from "next/link";
 import React from "react";
 
 const Connect = () => {
+
+
   return (
     <div className="bg-[#ECD2FC66] text-center py-8 px-4 sm:py-[5%] sm:px-[10%] flex flex-col gap-6 sm:gap-8">
       <div className="flex flex-col gap-4">
