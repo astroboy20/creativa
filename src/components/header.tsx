@@ -34,16 +34,22 @@ const Header = () => {
   };
 
   const user = auth?.currentUser;
+
+  const isActive = (route: string) =>
+    pathName === route ? "border-b-2 border-[#501078]" : "";
   return (
     <div className="fixed flex justify-between items-center px-[6%] py-[3%] lg:py-[2%] bg-white w-full z-50">
       <div className="flex gap-14 items-center text-[20px]">
-        <h1 className="text-[28px] md:text-[32px] font-[700] text-[#501078]">
-          Creativa
-        </h1>
+        <Link href={"/"}>
+          <h1 className="text-[28px] md:text-[32px] font-[700] text-[#501078]">
+            Creativa
+          </h1>
+        </Link>
         {pathName === "/explore" && (
           <div className="hidden lg:flex items-center gap-5">
-            <p>For You</p>
-            <p>Follow</p>
+            <Link href="/explore" className={isActive("/explore")}>
+              <p>For You</p>
+            </Link>
           </div>
         )}
       </div>
@@ -51,13 +57,13 @@ const Header = () => {
       {/* Navbar links for medium to large screens */}
       {pathName !== "/explore" && (
         <div className="hidden md:flex gap-10 items-center text-[20px]">
-          <Link href="/explore">
+          <Link href="/explore" className={isActive("/explore")}>
             <p>Explore</p>
           </Link>
-          <Link href="/connect">
+          <Link href="/connect" className={isActive("/connect")}>
             <p>Connect</p>
           </Link>
-          <Link href="/about">
+          <Link href="/about" className={isActive("/about")}>
             <p>About</p>
           </Link>
         </div>
@@ -139,22 +145,34 @@ const Header = () => {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="fixed top-0 left-0 w-full h-full bg-white text-black shadow-md md:hidden z-20 flex flex-col items-center justify-center gap-8 text-[24px]">
-          <Link href="/explore" onClick={toggleMenu}>
+          <Link
+            href="/explore"
+            onClick={toggleMenu}
+            className={isActive("/explore")}
+          >
             Explore
           </Link>
-          <Link href="/connect" onClick={toggleMenu}>
+          <Link
+            href="/connect"
+            onClick={toggleMenu}
+            className={isActive("/connect")}
+          >
             Connect
           </Link>
-          <Link href="/about" onClick={toggleMenu}>
+          <Link
+            href="/about"
+            onClick={toggleMenu}
+            className={isActive("/about")}
+          >
             About
           </Link>
 
           {user ? (
             <Link href="/register" onClick={toggleMenu}>
-            <p className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]">
-             Logout
-            </p>
-          </Link>
+              <p className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]">
+                Logout
+              </p>
+            </Link>
           ) : (
             <div className="flex flex-col gap-5 text-center">
               {" "}
