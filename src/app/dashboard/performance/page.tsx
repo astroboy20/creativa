@@ -1,4 +1,4 @@
-import { DashboardMain } from "@/containers/dashboard/home";
+import { DashboardMain } from "@/containers/dashboard/home/home";
 import ProtectedRoute from "@/provider/protected-route";
 
 export default function Page() {

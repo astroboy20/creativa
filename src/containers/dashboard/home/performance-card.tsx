@@ -1,9 +1,9 @@
 // components/PerformanceCard.tsx
-import React from 'react';
+import React, { ReactNode } from "react";
 
 type PerformanceCardProps = {
-  title: string;
-  value: string | number;
+  title: string | ReactNode | any;
+  value: string | number | any;
 };
 
 const PerformanceCard: React.FC<PerformanceCardProps> = ({ title, value }) => {
@@ -15,4 +15,4 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({ title, value }) => {
   );
 };
 
-export  {PerformanceCard};
+export { PerformanceCard };
