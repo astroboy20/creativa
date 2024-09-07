@@ -104,7 +104,7 @@ const DashboardMain: React.FC = () => {
        
       </div>
 
-      <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+      {/* <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
         <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
           <button className="bg-[#501078] text-white py-2 px-4 rounded hover:bg-[#ECD2FC66]">
             Add New Work
@@ -116,7 +116,7 @@ const DashboardMain: React.FC = () => {
             Update Profile
           </button>
         </div>
-      </div>
+      </div> */}
     </main>
   );
 };

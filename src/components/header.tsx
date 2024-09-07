@@ -60,9 +60,9 @@ const Header = () => {
           <Link href="/explore" className={isActive("/explore")}>
             <p>Explore</p>
           </Link>
-          <Link href="/connect" className={isActive("/connect")}>
+          {/* <Link href="/connect" className={isActive("/connect")}>
             <p>Connect</p>
-          </Link>
+          </Link> */}
           <Link href="/about" className={isActive("/about")}>
             <p>About</p>
           </Link>
@@ -152,13 +152,13 @@ const Header = () => {
           >
             Explore
           </Link>
-          <Link
+          {/* <Link
             href="/connect"
             onClick={toggleMenu}
             className={isActive("/connect")}
           >
             Connect
-          </Link>
+          </Link> */}
           <Link
             href="/about"
             onClick={toggleMenu}
