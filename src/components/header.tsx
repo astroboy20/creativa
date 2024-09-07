@@ -16,7 +16,13 @@ import {
 import { CreatorForm } from "./creator";
 import { auth } from "@/firebase/firebaseConfig";
 
-const Header = () => {
+interface HeaderProps {
+  showSearch?: boolean; // Optional prop to show search
+  handleSearch?: (query: string) => void; // Search handler function
+}
+
+
+const Header: React.FC<HeaderProps> = ({ showSearch, handleSearch }) => {
   const pathName = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -31,6 +37,16 @@ const Header = () => {
 
   const handleDialogOpen = () => {
     setDialogOpen(true);
+  };
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    if (handleSearch) {
+      handleSearch(value); // Call the search function from parent
+    }
   };
 
   const user = auth?.currentUser;
@@ -60,16 +76,13 @@ const Header = () => {
           <Link href="/explore" className={isActive("/explore")}>
             <p>Explore</p>
           </Link>
-          {/* <Link href="/connect" className={isActive("/connect")}>
-            <p>Connect</p>
-          </Link> */}
           <Link href="/about" className={isActive("/about")}>
             <p>About</p>
           </Link>
         </div>
       )}
 
-      {pathName === "/explore" ? (
+      {showSearch && pathName === "/explore" ? (
         <div className="flex gap-5 items-center">
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger
@@ -90,6 +103,8 @@ const Header = () => {
             </DialogContent>
           </Dialog>
           <Input
+            value={searchQuery}
+            onChange={handleInputChange}
             placeholder="Search"
             className="hidden lg:flex border border-[#501078]"
           />
@@ -108,9 +123,8 @@ const Header = () => {
       )}
 
       {/* Hamburger menu for small screens */}
-
       <div className="md:hidden z-30 flex items-center gap-3">
-        {pathName === "/explore" && (
+        {showSearch && pathName === "/explore" && (
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger
               className="border-2 border-[#501078] text-[#501078] py-[5px] px-[20px] rounded-[8px]"
@@ -152,18 +166,7 @@ const Header = () => {
           >
             Explore
           </Link>
-          {/* <Link
-            href="/connect"
-            onClick={toggleMenu}
-            className={isActive("/connect")}
-          >
-            Connect
-          </Link> */}
-          <Link
-            href="/about"
-            onClick={toggleMenu}
-            className={isActive("/about")}
-          >
+          <Link href="/about" onClick={toggleMenu} className={isActive("/about")}>
             About
           </Link>
 
@@ -175,7 +178,6 @@ const Header = () => {
             </Link>
           ) : (
             <div className="flex flex-col gap-5 text-center">
-              {" "}
               <Link href="/login" onClick={toggleMenu}>
                 Sign in
               </Link>

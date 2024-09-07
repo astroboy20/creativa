@@ -4,12 +4,12 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth, fireStore, storage } from "../../firebase/firebaseConfig"; // Import storage
+import { auth, fireStore, storage } from "../../firebase/firebaseConfig";
 import Cookies from "js-cookie";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Firebase Storage utilities
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
 import { doc, setDoc } from "firebase/firestore";
 
@@ -19,12 +19,15 @@ type Inputs = {
   password: string;
   confirmPassword: string;
   category: string;
-  profilePicture: FileList; // FileList to handle file upload
+  profilePicture: FileList;
+  customCategory?: string; // Optional field for custom category
 };
 
 const Register = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -40,8 +43,11 @@ const Register = () => {
       return;
     }
 
+    const categoryToSave = showCustomCategory
+      ? data.customCategory
+      : data.category;
+
     try {
-      // Create user
       const userCredentials = await createUserWithEmailAndPassword(
         auth,
         data.email,
@@ -49,36 +55,25 @@ const Register = () => {
       );
       const user = userCredentials.user;
 
-      // Upload profile picture to Firebase Storage
       const profilePictureRef = ref(storage, `profilePictures/${user.uid}`);
       await uploadBytes(profilePictureRef, data.profilePicture[0]);
       const profilePictureURL = await getDownloadURL(profilePictureRef);
 
-      // Update user profile
       await updateProfile(user, {
         displayName: data.name,
         photoURL: profilePictureURL,
       });
 
-      // Store token in cookies
-      const token = await user.getIdToken();
-      Cookies.set("token", token, { expires: 7 });
-
-      console.log("User registered with name:", user.displayName);
-
-      // Display success message
-      toast.success("Registration Successful");
-
-      // Navigate to dashboard
-
       await setDoc(doc(fireStore, "users", user.uid), {
         uid: user.uid,
         name: data.name,
         email: data.email,
-        category: data.category,
+        category: categoryToSave,
         profilePictureURL: profilePictureURL,
         createdAt: new Date().toISOString(),
       });
+
+      toast.success("Registration Successful");
       router.push("/dashboard");
     } catch (error: any) {
       toast.error(
@@ -87,6 +82,10 @@ const Register = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setShowCustomCategory(e.target.value === "Others");
   };
 
   return (
@@ -181,6 +180,7 @@ const Register = () => {
               id="category"
               {...register("category", { required: "Category is required" })}
               className="mt-1 w-full p-2 border rounded"
+              onChange={handleCategoryChange}
             >
               <option value="">Select a category</option>
               <option value="Art">Art</option>
@@ -189,12 +189,42 @@ const Register = () => {
               <option value="Music">Music</option>
               <option value="Tech">Tech</option>
               <option value="Vlog">Vlog</option>
-              {/* Add more categories as needed */}
+              <option value="Writing">Writing</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Gaming">Gaming</option>
+              <option value="Film">Film</option>
+              <option value="Dance">Dance</option>
+              <option value="Others">Others</option>
             </select>
             {errors.category && (
               <p className="text-red-500 text-sm">{errors.category.message}</p>
             )}
           </div>
+
+          {showCustomCategory && (
+            <div>
+              <label
+                htmlFor="customCategory"
+                className="text-sm md:text-base lg:text-lg"
+              >
+                Custom Category
+              </label>
+              <Input
+                id="customCategory"
+                type="text"
+                placeholder="Enter your custom category"
+                {...register("customCategory", {
+                  required: "Please specify your category",
+                })}
+                className="mt-1"
+              />
+              {errors.customCategory && (
+                <p className="text-red-500 text-sm">
+                  {errors.customCategory.message}
+                </p>
+              )}
+            </div>
+          )}
 
           <div>
             <label

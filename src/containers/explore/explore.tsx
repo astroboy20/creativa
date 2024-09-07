@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -7,11 +7,50 @@ import { ClipLoader } from "react-spinners";
 import { useFetchItem } from "@/hooks/useFetchItem";
 import { ExploreType } from "@/lib/types";
 
-const Explore = () => {
-  const router = useRouter();
-  const { data: projects = [], isLoading } = useFetchItem({
-    collectionName: "creators",
+const processCreatorsData = (data: any[]) => {
+  return data.map((docData: any) => {
+    let averageRating = 0;
+    if (Array.isArray(docData.rating)) {
+      if (docData.rating.length > 0) {
+        averageRating =
+          docData.rating.reduce(
+            (acc: number, cur: any) => acc + cur.rating,
+            0
+          ) / docData.rating.length;
+      }
+    } else {
+      averageRating = docData.rating;
+    }
+
+    return { ...docData, averageRating };
   });
+};
+
+interface ExploreProps {
+  searchQuery: string;
+}
+
+const Explore: React.FC<ExploreProps> = ({ searchQuery }) => {
+  const [filteredItems, setFilteredItems] = useState<ExploreType[]>([]);
+  const router = useRouter();
+  const { data: items = [], isLoading } = useFetchItem({
+    collectionName: "creators",
+    processData: processCreatorsData,
+  });
+
+  console.log(items)
+
+  // Filter items based on search query
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = items.filter((item: ExploreType) =>
+        item?.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredItems(filtered);
+    } else {
+      setFilteredItems(items);
+    }
+  }, [searchQuery, items]);
 
   const handleClick = (id: string) => {
     router.push(`/explore/${id}`);
@@ -28,7 +67,7 @@ const Explore = () => {
   return (
     <div className="pt-[25%] lg:pt-[10%] px-4 sm:px-[6%] w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
-        {projects.map((creator: ExploreType) => (
+        {filteredItems.map((creator: ExploreType) => (
           <div
             key={creator.id}
             className="bg-white p-4 rounded-lg shadow-lg lg:bg-none lg:rounded-none lg:shadow-none cursor-pointer"
@@ -49,7 +88,7 @@ const Explore = () => {
                   className="rounded-full w-full h-full"
                 />
                 <p className="text-sm sm:text-lg md:text-[16px] font-bold">
-                  {creator.profileName}
+                  {creator.name}
                 </p>
               </div>
               <div className="flex items-center">

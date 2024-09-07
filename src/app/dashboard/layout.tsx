@@ -72,25 +72,25 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
         <nav>
           <Link href="/dashboard">
-            <p className="flex items-center py-2.5 rounded hover:bg-[#ECD2FC66]">
+            <p className="flex items-center py-2.5 rounded hover:bg-[#ECD2FC66] hover:p-2">
               <FaHome className="mr-2" />
-             Home
+              Home
             </p>
           </Link>
           <Link href="/dashboard/performance">
-            <p className="flex items-center py-2.5 rounded hover:bg-[#ECD2FC66]">
+            <p className="flex items-center py-2.5 rounded hover:bg-[#ECD2FC66]  hover:p-2">
               <FaChartLine className="mr-2" />
               Performance Overview
             </p>
           </Link>
           <Link href="/dashboard/settings">
-            <p className="flex items-center py-2.5 rounded hover:bg-[#ECD2FC66]">
+            <p className="flex items-center py-2.5 rounded hover:bg-[#ECD2FC66]  hover:p-2">
               <FaCogs className="mr-2" />
               Account Settings
             </p>
           </Link>
           <p
-            className="flex items-center py-2.5 rounded hover:bg-[#ECD2FC66] cursor-pointer"
+            className="flex items-center py-2.5 rounded hover:bg-[#ECD2FC66] cursor-pointer  hover:p-2"
             onClick={handleLogout}
           >
             <FaCogs className="mr-2" />
@@ -114,7 +114,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <button className="relative z-10 block w-8 h-8 rounded-full overflow-hidden shadow focus:outline-none">
               <img
                 className="w-full h-full object-cover"
-                src={user?.photoURL || "/default-avatar.png"} 
+                src={user?.photoURL || "/default-avatar.png"}
                 alt="User avatar"
               />
             </button>

@@ -13,7 +13,7 @@ const DashboardMain: React.FC = () => {
 
   const { data: projects } = useFetchItem({
     collectionName: "creators",
-    filterByUser: false,
+    filterByUser: true,
   });
 
   console.log(projects);
@@ -93,15 +93,14 @@ const DashboardMain: React.FC = () => {
       </div>
 
       <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
-      <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-[#501078]">
-            Recent Activity
-          </h2>
+        <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-[#501078]">
+          Recent Activity
+        </h2>
         {projects?.length === 0 ? (
           <p className="text-sm sm:text-base">No recent activity to show</p>
         ) : (
           <RecentActivityChart data={projects} />
         )}
-       
       </div>
 
       {/* <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
