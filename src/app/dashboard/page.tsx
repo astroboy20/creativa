@@ -1,11 +1,11 @@
-import { PerformanceChart } from "@/containers/dashboard/perfomance/perfomance";
+import { DashboardMain } from "@/containers/dashboard/home/home";
 import ProtectedRoute from "@/provider/protected-route";
 
 export default function Page() {
   return (
     <main>
       <ProtectedRoute>
-        <PerformanceChart />
+        <DashboardMain />
       </ProtectedRoute>
     </main>
   );

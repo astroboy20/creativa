@@ -71,10 +71,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </button>
         </div>
         <nav>
-          <Link href="/dashboard/creative-showcase">
+          <Link href="/dashboard">
             <p className="flex items-center py-2.5 rounded hover:bg-[#ECD2FC66]">
               <FaHome className="mr-2" />
-              Creative Showcase
+             Home
             </p>
           </Link>
           <Link href="/dashboard/performance">

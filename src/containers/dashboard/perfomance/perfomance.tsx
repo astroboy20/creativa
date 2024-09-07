@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -21,32 +22,37 @@ ChartJS.register(
 );
 
 const PerformanceChart = () => {
-  const { data: projects } = useFetchItem({
+  const { data, isLoading, error } = useFetchItem({
     collectionName: "creators",
     filterByUser: false,
   });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading data.</div>;
+
   const chartData = {
     labels: data?.map((item) => item.name) || [], // Labels for the chart
     datasets: [
       {
-        label: "Total Uploads",
-        data: data?.map((item) => item.uploads || 0), // Data for the total uploads
+        label: "Number of Ratings",
+        data: data?.map((item: any) => item.rating?.length || 0),
         backgroundColor: "#501078",
+        borderColor: "#ECD2FC",
+        borderWidth: 1,
       },
       {
-        label: "Average Rating",
-        data: data?.map((item) => item.averageRating || 0), // Data for average ratings
-        backgroundColor: "#ECD2FC66",
-      },
-      {
-        label: "Total Comments",
-        data: data?.map((item) => item.totalComments || 0), // Data for total comments
+        label: "Number of Comments",
+        data: data?.map(
+          (item: any) => item.rating?.filter((r: any) => r.comment).length || 0
+        ),
         backgroundColor: "#FF6F61",
+        borderColor: "#FFD2D2",
+        borderWidth: 1,
       },
     ],
   };
 
-  const options = {
+  const options: any = {
     responsive: true,
     plugins: {
       legend: {
@@ -54,7 +60,7 @@ const PerformanceChart = () => {
       },
       tooltip: {
         callbacks: {
-          label: function (tooltipItem) {
+          label: function (tooltipItem: any) {
             return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
           },
         },
