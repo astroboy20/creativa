@@ -38,9 +38,6 @@ const Explore: React.FC<ExploreProps> = ({ searchQuery }) => {
     processData: processCreatorsData,
   });
 
-  console.log(items)
-
-  // Filter items based on search query
   useEffect(() => {
     if (searchQuery) {
       const filtered = items.filter((item: ExploreType) =>

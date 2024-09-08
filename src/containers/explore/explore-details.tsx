@@ -27,7 +27,7 @@ interface ProjectType {
   description: string;
   src: string;
   profileImage: string | any;
-  rating: RatingType[]; // Update to array of objects
+  rating: RatingType[]; 
 }
 
 const ExploreDetails = () => {
@@ -78,8 +78,8 @@ const ExploreDetails = () => {
         rating: [...project.rating, newRating],
       });
 
-      setUserRating(0); // Reset the rating after submission
-      setUserComment(""); // Reset the comment after submission
+      setUserRating(0); 
+      setUserComment(""); 
       setLoading(false);
     }
   };

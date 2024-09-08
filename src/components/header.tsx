@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdCancel } from "react-icons/md";
@@ -15,16 +15,19 @@ import {
 } from "@/components/ui/dialog";
 import { CreatorForm } from "./creator";
 import { auth } from "@/firebase/firebaseConfig";
+import { signOut } from "firebase/auth";
+import { toast } from "react-toastify";
 
 interface HeaderProps {
   showSearch?: boolean; // Optional prop to show search
   handleSearch?: (query: string) => void; // Search handler function
 }
 
-
 const Header: React.FC<HeaderProps> = ({ showSearch, handleSearch }) => {
   const pathName = usePathname();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -45,14 +48,27 @@ const Header: React.FC<HeaderProps> = ({ showSearch, handleSearch }) => {
     const value = e.target.value;
     setSearchQuery(value);
     if (handleSearch) {
-      handleSearch(value); // Call the search function from parent
+      handleSearch(value);
     }
   };
 
-  const user = auth?.currentUser;
+  const currentUser = auth?.currentUser;
 
   const isActive = (route: string) =>
     pathName === route ? "border-b-2 border-[#501078]" : "";
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        setUser(null);
+        router.push("/login");
+        toast.success("User logged out successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Failed to log out. Please try again.");
+      });
+  };
   return (
     <div className="fixed flex justify-between items-center px-[6%] py-[3%] lg:py-[2%] bg-white w-full z-50">
       <div className="flex gap-14 items-center text-[20px]">
@@ -109,6 +125,13 @@ const Header: React.FC<HeaderProps> = ({ showSearch, handleSearch }) => {
             className="hidden lg:flex border border-[#501078]"
           />
         </div>
+      ) : currentUser ? (
+        <p
+          className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]"
+          onClick={handleLogout}
+        >
+          Logout
+        </p>
       ) : (
         <div className="hidden md:flex gap-10 items-center text-[20px]">
           <Link href="/login">
@@ -166,13 +189,20 @@ const Header: React.FC<HeaderProps> = ({ showSearch, handleSearch }) => {
           >
             Explore
           </Link>
-          <Link href="/about" onClick={toggleMenu} className={isActive("/about")}>
+          <Link
+            href="/about"
+            onClick={toggleMenu}
+            className={isActive("/about")}
+          >
             About
           </Link>
 
-          {user ? (
+          {currentUser ? (
             <Link href="/register" onClick={toggleMenu}>
-              <p className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]">
+              <p
+                className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]"
+                onClick={handleLogout}
+              >
                 Logout
               </p>
             </Link>
