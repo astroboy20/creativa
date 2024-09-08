@@ -30,11 +30,14 @@ interface CreatorFormProps {
 
 const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
   const [name, setName] = useState("");
-  const [categories, setCategories] = useState<any>("");
+  const [categories, setCategories] = useState<string | null>(null);
+  const [customCategory, setCustomCategory] = useState<string>(""); // State for custom category
   const [imageSrc, setImageSrc] = useState("");
   const [description, setDecription] = useState("");
   const [imageFile, setImageFile] = useState<File | null | any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCustomCategory, setIsCustomCategory] = useState(false); // State to track if "Others" is selected
+
   const categoryOptions = [
     "Art",
     "Photography",
@@ -42,6 +45,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
     "Design",
     "Beauty",
     "Food",
+    "Others",
   ];
 
   const getCreatorsDataRef = collection(fireStore, "creators");
@@ -51,6 +55,16 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
     if (file) {
       setImageFile(file);
       setImageSrc(URL.createObjectURL(file));
+    }
+  };
+
+  const handleCategoryChange = (value: string) => {
+    if (value === "Others") {
+      setIsCustomCategory(true);
+      setCategories(null);
+    } else {
+      setIsCustomCategory(false);
+      setCategories(value);
     }
   };
 
@@ -69,9 +83,11 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
       }
     }
 
+    const categoryToSave = isCustomCategory ? customCategory : categories;
+
     const creatorData: CreatorData = {
       name,
-      categories,
+      categories: categoryToSave || "",
       src: imageUrl,
       rating: [], // Initialize as an empty array
       profileName: auth?.currentUser?.displayName,
@@ -84,6 +100,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
       await addDoc(getCreatorsDataRef, creatorData);
       setName("");
       setCategories("");
+      setCustomCategory(""); // Reset custom category field
       setImageSrc("");
       setImageFile(null); // Correctly reset the image file
       onClose(); // Ensure dialog is closed
@@ -114,8 +131,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
           Categories
         </label>
         <Select
-          value={categories}
-          onValueChange={(value) => setCategories(value)}
+          onValueChange={(value) => handleCategoryChange(value)}
           required
         >
           <SelectTrigger className="w-full">
@@ -130,6 +146,22 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
           </SelectContent>
         </Select>
       </div>
+
+      {isCustomCategory && (
+        <div className="mb-4">
+          <label htmlFor="customCategory" className="block text-sm font-medium">
+            Custom Category
+          </label>
+          <Input
+            id="customCategory"
+            placeholder="Enter custom category"
+            value={customCategory}
+            onChange={(e) => setCustomCategory(e.target.value)}
+            required={isCustomCategory}
+          />
+        </div>
+      )}
+
       <div className="mb-4">
         <label htmlFor="description" className="block text-sm font-medium">
           Description
@@ -143,6 +175,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
           className="w-full p-3 border"
         />
       </div>
+
       <div className="mb-4">
         <label htmlFor="image" className="block text-sm font-medium">
           Image

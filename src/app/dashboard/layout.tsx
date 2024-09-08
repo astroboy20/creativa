@@ -71,7 +71,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </button>
         </div>
         <nav>
-          <Link href="/dashboard">
+          <Link href="/">
             <p className="flex items-center py-2.5 rounded hover:bg-[#ECD2FC66] hover:p-2">
               <FaHome className="mr-2" />
               Home

@@ -33,10 +33,22 @@ interface ExploreProps {
 const Explore: React.FC<ExploreProps> = ({ searchQuery }) => {
   const [filteredItems, setFilteredItems] = useState<ExploreType[]>([]);
   const router = useRouter();
-  const { data: items = [], isLoading } = useFetchItem({
+  const {
+    data: items = [],
+    isLoading,
+    refetch,
+  } = useFetchItem({
     collectionName: "creators",
     processData: processCreatorsData,
   });
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      refetch();
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [refetch]);
 
   useEffect(() => {
     if (searchQuery) {
@@ -78,11 +90,11 @@ const Explore: React.FC<ExploreProps> = ({ searchQuery }) => {
               className="rounded-[16px] object-cover w-full h-auto"
             />
             <div className="flex justify-between items-center mt-4">
-              <div className="flex items-center gap-2 w-[30px] h-[30px] rounded-full">
+              <div className="flex items-center gap-2  rounded-full">
                 <img
                   src={creator.profileImage}
                   alt="profile-image"
-                  className="rounded-full w-full h-full"
+                  className="rounded-full w-[30px] h-[30px]"
                 />
                 <p className="text-sm sm:text-lg md:text-[16px] font-bold">
                   {creator.name}

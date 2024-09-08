@@ -127,7 +127,7 @@ const Header: React.FC<HeaderProps> = ({ showSearch, handleSearch }) => {
         </div>
       ) : currentUser ? (
         <p
-          className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]"
+          className="hidden lg:flex bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px] cursor-pointer"
           onClick={handleLogout}
         >
           Logout
@@ -200,7 +200,7 @@ const Header: React.FC<HeaderProps> = ({ showSearch, handleSearch }) => {
           {currentUser ? (
             <Link href="/register" onClick={toggleMenu}>
               <p
-                className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px]"
+                className="bg-[#501078] text-white py-[10px] px-[28px] rounded-[8px] cursor-pointer"
                 onClick={handleLogout}
               >
                 Logout

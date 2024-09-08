@@ -41,14 +41,11 @@ const Explore = ({creators}:ExploreProps) => {
               />
             </div>
             <div className="flex justify-between items-center mt-4">
-              <div className="flex w-[30px] h-[30px] items-center gap-2">
-                <Image
+            <div className="flex items-center gap-2  rounded-full">
+                <img
                   src={data.profileImage}
-                  width={30}
-                  height={30}
-                  objectFit="cover"
                   alt="profile-image"
-                  className="rounded-full w-full h-full"
+                  className="rounded-full w-[30px] h-[30px]"
                 />
                 <p className="text-sm sm:text-lg md:text-[16px] font-bold">
                   {data.name}
