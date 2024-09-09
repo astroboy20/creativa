@@ -12,6 +12,8 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth, fireStore, storage } from "@/firebase/firebaseConfig";
 import { addDoc, collection } from "firebase/firestore";
 import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export interface CreatorData {
   name: string;
@@ -22,21 +24,24 @@ export interface CreatorData {
   profileImage: string | any;
   email: string | any;
   description: string;
+  userId: string | any;
 }
 
 interface CreatorFormProps {
-  onClose: () => void; // New prop to handle dialog close
+  onClose: () => void;
 }
 
 const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
+  const router = useRouter();
+  const uId = auth?.currentUser?.uid ? auth?.currentUser?.uid : null;
   const [name, setName] = useState("");
   const [categories, setCategories] = useState<string | null>(null);
-  const [customCategory, setCustomCategory] = useState<string>(""); // State for custom category
+  const [customCategory, setCustomCategory] = useState<string>("");
   const [imageSrc, setImageSrc] = useState("");
   const [description, setDecription] = useState("");
   const [imageFile, setImageFile] = useState<File | null | any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isCustomCategory, setIsCustomCategory] = useState(false); // State to track if "Others" is selected
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
 
   const categoryOptions = [
     "Art",
@@ -70,6 +75,14 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check if user is authenticated
+    if (!uId) {
+      toast.error("You need to be logged in to create a project.");
+      router.push("/login"); // Redirect to login page if not authenticated
+      return;
+    }
+
     setIsLoading(true);
     let imageUrl = "";
 
@@ -89,23 +102,25 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
       name,
       categories: categoryToSave || "",
       src: imageUrl,
-      rating: [], // Initialize as an empty array
+      rating: [],
       profileName: auth?.currentUser?.displayName,
       profileImage: auth?.currentUser?.photoURL,
       email: auth?.currentUser?.email,
       description,
+      userId: auth?.currentUser?.uid,
     };
 
     try {
       await addDoc(getCreatorsDataRef, creatorData);
       setName("");
       setCategories("");
-      setCustomCategory(""); // Reset custom category field
+      setCustomCategory("");
       setImageSrc("");
-      setImageFile(null); // Correctly reset the image file
-      onClose(); // Ensure dialog is closed
-    } catch (error) {
-      console.error("Error adding document:", error);
+      setImageFile(null);
+      onClose();
+      toast.success("Project Created");
+    } catch (error: any) {
+      toast.error("Error adding Project");
     } finally {
       setIsLoading(false);
     }
@@ -130,10 +145,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({ onClose }) => {
         <label htmlFor="categories" className="block text-sm font-medium">
           Categories
         </label>
-        <Select
-          onValueChange={(value) => handleCategoryChange(value)}
-          required
-        >
+        <Select onValueChange={(value) => handleCategoryChange(value)} required>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select categories" />
           </SelectTrigger>
