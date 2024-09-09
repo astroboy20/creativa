@@ -31,35 +31,38 @@ export const useFetchItem = ({
     queryKey: [collectionName, queryConstraints, filterByUser],
     queryFn: async () => {
       try {
-        const user = auth.currentUser;
+        // Get current user's UID
+        const user = auth.currentUser?.uid;
+        console.log("Current User UID:", user); // Log the user UID for debugging
 
-        // Optionally redirect to login if no token (or use different logic)
-        // if (!token) {
-        //   router.push("/login");
-        //   throw new Error("Authentication required");
-        // }
+        // If filtering by user and no user is found, throw an error
+        if (filterByUser && !user) {
+          throw new Error("No user found, redirecting to login.");
+        }
 
         const collectionRef = collection(fireStore, collectionName);
 
-        // Build the query based on provided constraints and user filter
+        // Combine the query constraints and add user filter if needed
         let combinedQueryConstraints = [...queryConstraints];
 
-        // If filtering by user, add a query constraint for the user's uid
-        if (filterByUser && user?.uid) {
-          combinedQueryConstraints.push(where("uid", "==", user.uid));
+        // If filtering by user, add the uid condition
+        if (filterByUser && user) {
+          combinedQueryConstraints.push(where("uid", "==", user));
         }
 
-        // Build the query based on whether constraints exist
+        // Create the query with constraints or return the collection reference
         const q = combinedQueryConstraints.length > 0
           ? query(collectionRef, ...combinedQueryConstraints)
           : collectionRef;
 
+        // Fetch the documents from Firestore
         const querySnapshot = await getDocs(q);
         const items = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
 
+        // If a processData function is provided, use it, otherwise return items
         return processData ? processData(items) : items;
       } catch (error: any) {
         console.error("Error fetching Firestore data:", error.message);

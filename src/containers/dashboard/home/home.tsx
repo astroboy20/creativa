@@ -7,16 +7,19 @@ import { auth } from "@/firebase/firebaseConfig";
 import { useFetchItem } from "@/hooks/useFetchItem";
 import { FaFileAlt, FaStar, FaComment } from "react-icons/fa"; // Importing icons
 import { RecentActivityChart } from "./recent-activity";
+import { useRouter } from "next/navigation";
 
 const DashboardMain: React.FC = () => {
   const [user, setUser] = useState<any>(null);
+  const router = useRouter();
 
-  const { data: projects } = useFetchItem({
+  // Fetch projects filtered by the authenticated user
+  const { data: projects, isLoading, isError, error } = useFetchItem({
     collectionName: "creators",
-    filterByUser: true,
+    filterByUser: false,
   });
 
-  console.log(projects);
+  // Calculate metrics (uploaded works, average rating, total comments)
   const totalContent = projects?.length || 0;
   let totalRatings = 0;
   let ratingCount = 0;
@@ -35,9 +38,10 @@ const DashboardMain: React.FC = () => {
     }
   });
 
-  const averageRating =
-    ratingCount > 0 ? (totalRatings / ratingCount).toFixed(1) : 0;
+  // Calculate the average rating
+  const averageRating = ratingCount > 0 ? (totalRatings / ratingCount).toFixed(1) : 0;
 
+  // Handle user authentication state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -49,15 +53,24 @@ const DashboardMain: React.FC = () => {
         });
       } else {
         setUser(null);
+        router.push("/login"); // Redirect to login if no user is found
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Show loading state while fetching data
+  }
+
+  if (isError) {
+    return <div>Error: {error.message}</div>; // Show error state if fetching fails
+  }
 
   return (
     <main className="sm:p-6 lg:p-8">
-      {user ? <UserProfile user={user} /> : ""}
+      {user ? <UserProfile user={user} /> : null}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
         <PerformanceCard
@@ -102,20 +115,6 @@ const DashboardMain: React.FC = () => {
           <RecentActivityChart data={projects} />
         )}
       </div>
-
-      {/* <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
-        <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-          <button className="bg-[#501078] text-white py-2 px-4 rounded hover:bg-[#ECD2FC66]">
-            Add New Work
-          </button>
-          <button className="bg-[#501078] text-white py-2 px-4 rounded hover:bg-[#ECD2FC66]">
-            View My Gallery
-          </button>
-          <button className="bg-[#501078] text-white py-2 px-4 rounded hover:bg-[#ECD2FC66]">
-            Update Profile
-          </button>
-        </div>
-      </div> */}
     </main>
   );
 };
