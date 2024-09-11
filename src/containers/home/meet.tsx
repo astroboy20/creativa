@@ -16,13 +16,13 @@ const Meet = ({ users }: MeetProps) => {
             key={data.id}
             className="min-w-[150px] sm:min-w-[200px] md:min-w-[250px] lg:min-w-[300px] flex-shrink-0 relative"
           >
-            <Image
-              src={data.profilePictureURL}
-              alt="creator's image"
-              width={300}
-              height={300}
-              className="rounded-[16px] object-cover"
-            />
+            <div className="w-[300px] h-[300px] ">
+              <img
+                src={data.profilePictureURL}
+                alt="creator's image"
+                className="w-full h-full object-cover rounded-[16px]"
+              />
+            </div>
             <div className="absolute bottom-4 left-4">
               <p className="mb-2 text-sm sm:text-lg md:text-xl font-bold">
                 {data.name}

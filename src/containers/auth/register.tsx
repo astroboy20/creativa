@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
-import { doc, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 
 type Inputs = {
   name: string;
@@ -27,7 +27,7 @@ const Register = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
-
+  const getUserDataRef = collection(fireStore, "users");
   const {
     register,
     handleSubmit,
@@ -53,7 +53,7 @@ const Register = () => {
         data.email,
         data.password
       );
-      const user = userCredentials.user;
+      const user = userCredentials?.user;
 
       const profilePictureRef = ref(storage, `profilePictures/${user.uid}`);
       await uploadBytes(profilePictureRef, data.profilePicture[0]);
@@ -64,13 +64,18 @@ const Register = () => {
         photoURL: profilePictureURL,
       });
 
-      await setDoc(doc(fireStore, "users", user.uid), {
-        uid: user.uid,
+      // Store token in cookies
+      const token = await user.getIdToken();
+      Cookies.set("token", token, { expires: 7 });
+
+      // Store user data in Firestore
+      await addDoc(getUserDataRef, {
         name: data.name,
         email: data.email,
         category: categoryToSave,
         profilePictureURL: profilePictureURL,
         createdAt: new Date().toISOString(),
+        userId: user.uid,
       });
 
       toast.success("Registration Successful");
@@ -84,6 +89,7 @@ const Register = () => {
     }
   };
 
+  // Handle category change and check for "Others"
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setShowCustomCategory(e.target.value === "Others");
   };
@@ -189,11 +195,8 @@ const Register = () => {
               <option value="Music">Music</option>
               <option value="Tech">Tech</option>
               <option value="Vlog">Vlog</option>
-              <option value="Writing">Writing</option>
               <option value="Fashion">Fashion</option>
-              <option value="Gaming">Gaming</option>
-              <option value="Film">Film</option>
-              <option value="Dance">Dance</option>
+              <option value="Fitness">Fitness</option>
               <option value="Others">Others</option>
             </select>
             {errors.category && (
@@ -201,6 +204,7 @@ const Register = () => {
             )}
           </div>
 
+          {/* Input field for custom category if "Others" is selected */}
           {showCustomCategory && (
             <div>
               <label
