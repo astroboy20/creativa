@@ -14,7 +14,7 @@ export default function Page() {
   return (
     <main>
       <Header showSearch={true} handleSearch={handleSearch} /> {/* Pass search handler */}
-      <Explore searchQuery={searchQuery} /> {/* Pass search query to explore */}
+      <Explore  searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleSearch={handleSearch} /> {/* Pass search query to explore */}
       <Footer />
     </main>
   );
