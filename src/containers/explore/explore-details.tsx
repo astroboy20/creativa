@@ -57,7 +57,6 @@ const ExploreDetails = () => {
       fetchProjectDetails();
     }
   }, [id]);
-  console.log(project);
 
   const handleSubmit = async () => {
     if (project && id && userComment.trim() && userRating > 0) {
@@ -79,6 +78,7 @@ const ExploreDetails = () => {
       });
 
       setUserRating(0); 
+      setUserName("")
       setUserComment(""); 
       setLoading(false);
     }

@@ -39,6 +39,7 @@ const Explore: React.FC<ExploreProps> = ({
   setSearchQuery,
 }) => {
   const [filteredItems, setFilteredItems] = useState<ExploreType[]>([]);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc"); // Sorting state
   const router = useRouter();
   const {
     data: items = [],
@@ -48,6 +49,7 @@ const Explore: React.FC<ExploreProps> = ({
     collectionName: "creators",
     processData: processCreatorsData,
   });
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       refetch();
@@ -57,15 +59,23 @@ const Explore: React.FC<ExploreProps> = ({
   });
 
   useEffect(() => {
+    let sortedItems = [...items];
+
+    if (sortOrder === "asc") {
+      sortedItems.sort((a, b) => a.averageRating - b.averageRating); // Ascending order
+    } else if (sortOrder === "desc") {
+      sortedItems.sort((a, b) => b.averageRating - a.averageRating); // Descending order
+    }
+
     if (searchQuery) {
-      const filtered = items.filter((item: ExploreType) =>
+      const filtered = sortedItems.filter((item: ExploreType) =>
         item?.categories?.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredItems(filtered);
     } else {
-      setFilteredItems(items);
+      setFilteredItems(sortedItems);
     }
-  }, [searchQuery, items]);
+  }, [searchQuery, items, sortOrder]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -73,6 +83,10 @@ const Explore: React.FC<ExploreProps> = ({
     if (handleSearch) {
       handleSearch(value);
     }
+  };
+
+  const handleSortChange = (order: "asc" | "desc") => {
+    setSortOrder(order); // Update sorting order
   };
 
   const handleClick = (id: string) => {
@@ -89,13 +103,24 @@ const Explore: React.FC<ExploreProps> = ({
 
   return (
     <div className="pt-[25%] lg:pt-[10%] px-4 sm:px-[6%] w-full">
-      <div className="flex mb-[25px] lg:hidden">
+      <div className="flex justify-between mb-[25px] lg:hidden">
         <Input
           className="w-full border-2 border-[black] h-[50px] focus-visible:ring-transparent focus-visible:ring-offset-0 outline-none"
           placeholder="Search by category"
           onChange={handleInputChange}
           value={searchQuery}
         />
+        {/* Sort Button */}
+        <div className="ml-4">
+          <select
+            className="border-2 border-black h-[50px] px-4"
+            onChange={(e) => handleSortChange(e.target.value as "asc" | "desc")}
+            value={sortOrder}
+          >
+            <option value="desc">Highest Rating</option>
+            <option value="asc">Lowest Rating</option>
+          </select>
+        </div>
       </div>
 
       {searchQuery && filteredItems.length === 0 ? (
@@ -110,13 +135,14 @@ const Explore: React.FC<ExploreProps> = ({
               className="bg-white p-4 rounded-lg shadow-lg lg:bg-none lg:rounded-none lg:shadow-none cursor-pointer"
               onClick={() => handleClick(creator.id)}
             >
-              <Image
-                src={creator.src || "/default-image.jpg"}
-                alt="creator's image"
-                width={300}
-                height={300}
-                className="rounded-[16px] object-cover w-full h-auto"
-              />
+              <div className="w-full h-[300px]">
+                <img
+                  src={creator.src || "/default-image.jpg"}
+                  alt="creator's image"
+                  className="w-full h-full object-cover rounded-[16px]"
+                />
+              </div>
+
               <div className="flex justify-between items-center mt-4">
                 <div className="flex items-center gap-2 rounded-full">
                   <img

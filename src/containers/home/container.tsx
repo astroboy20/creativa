@@ -32,11 +32,15 @@ const processCreatorsData = (data: any[]) => {
 const Container = () => {
   const { data: creators = [] } = useFetchItem({
     collectionName: "creators",
+    orderByField: "rating", 
+    orderDirection: "desc", 
     processData: processCreatorsData,
   });
 
   const { data: users = [], isLoading } = useFetchItem({
     collectionName: "users",
+    orderByField: "createdAt", 
+    orderDirection: "desc", 
   });
   console.log("data", users);
   if (isLoading) {

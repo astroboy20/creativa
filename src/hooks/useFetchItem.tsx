@@ -7,6 +7,7 @@ import {
   query,
   QueryConstraint,
   where,
+  orderBy,
 } from "firebase/firestore";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -14,41 +15,50 @@ import { useRouter } from "next/navigation";
 interface FireStoreDataProps {
   collectionName: string;
   queryConstraints?: QueryConstraint[];
-  processData?: (data: any[]) => any[]; 
-  filterByUser?: boolean; 
+  processData?: (data: any[]) => any[];
+  filterByUser?: boolean;
+  orderByField?: string; // Optional: Field to order by
+  orderDirection?: "asc" | "desc"; // Optional: Ascending or descending order
 }
 
 export const useFetchItem = ({
   collectionName,
-  queryConstraints = [], 
+  queryConstraints = [],
   processData,
-  filterByUser = false, 
+  filterByUser = false,
+  orderByField, // Field to order by if needed
+  orderDirection = "asc", // Default to ascending if provided
 }: FireStoreDataProps) => {
   const router = useRouter();
   const token = Cookies.get("token");
 
   return useQuery({
-    queryKey: [collectionName, queryConstraints, filterByUser],
+    queryKey: [collectionName, queryConstraints, filterByUser, orderByField, orderDirection],
     queryFn: async () => {
       try {
         const user = auth.currentUser?.uid;
 
         if (filterByUser && !user) {
+          router.push("/login");
           throw new Error("No user found, redirecting to login.");
         }
 
         const collectionRef = collection(fireStore, collectionName);
-
         let combinedQueryConstraints = [...queryConstraints];
 
+        // Apply filtering by user if required
         if (filterByUser && user) {
           combinedQueryConstraints.push(where("uid", "==", user));
         }
 
-        const q = combinedQueryConstraints.length > 0
-          ? query(collectionRef, ...combinedQueryConstraints)
-          : collectionRef;
+        // Conditionally apply `orderBy` only if `orderByField` is provided
+        if (orderByField) {
+          combinedQueryConstraints.push(orderBy(orderByField, orderDirection));
+        }
 
+        const q = query(collectionRef, ...combinedQueryConstraints);
+
+        // Fetch documents
         const querySnapshot = await getDocs(q);
         const items = querySnapshot.docs.map((doc) => ({
           id: doc.id,
