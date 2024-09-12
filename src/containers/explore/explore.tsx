@@ -111,7 +111,7 @@ const Explore: React.FC<ExploreProps> = ({
           value={searchQuery}
         />
         {/* Sort Button */}
-        <div className="ml-4">
+        {/* <div className="ml-4">
           <select
             className="border-2 border-black h-[50px] px-4"
             onChange={(e) => handleSortChange(e.target.value as "asc" | "desc")}
@@ -120,7 +120,7 @@ const Explore: React.FC<ExploreProps> = ({
             <option value="desc">Highest Rating</option>
             <option value="asc">Lowest Rating</option>
           </select>
-        </div>
+        </div> */}
       </div>
 
       {searchQuery && filteredItems.length === 0 ? (
