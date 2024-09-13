@@ -196,6 +196,13 @@ const Header: React.FC<HeaderProps> = ({ showSearch, handleSearch }) => {
           >
             About
           </Link>
+          <Link
+            href="/connect"
+            onClick={toggleMenu}
+            className={isActive("/connect")}
+          >
+            Connect
+          </Link>
 
           {currentUser ? (
             <Link href="/register" onClick={toggleMenu}>

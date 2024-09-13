@@ -23,17 +23,11 @@ const Meet = ({ users }: MeetProps) => {
                 className="w-full h-full object-cover rounded-[16px]"
               />
             </div>
-            <div className="absolute bottom-4 left-4">
-              <p className="mb-2 text-sm sm:text-lg md:text-xl font-bold">
-                {data.name}
+            <div className="absolute bottom-4 left-4 bg-white bg-opacity-75 p-3 rounded-lg shadow-lg">
+              <p className="text-lg font-bold mb-1">{data.name}</p>
+              <p className="text-sm bg-[#F2F3F466] border border-black px-3 py-1 rounded-full">
+                {data.category}
               </p>
-              <div className="flex gap-3 items-center flex-wrap">
-                <div>
-                  <p className="rounded-[16px] bg-[#F2F3F466] border border-black px-[10px] sm:px-[15px] md:px-[20px] py-[3px] text-xs sm:text-sm md:text-base">
-                    {data.category}
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         ))}

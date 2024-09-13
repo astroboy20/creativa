@@ -29,6 +29,7 @@ const Explore = ({creators}:ExploreProps) => {
         {creators?.map((data: ExploreType) => (
           <div
             key={data.id}
+            onClick={() => handleClick(data.id)}
             className="bg-white p-4 rounded-lg shadow-lg lg:bg-none lg:rounded-none lg:shadow-none"
           >
             <div className="w-auto h-[300px] relative">
